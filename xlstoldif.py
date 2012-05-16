@@ -104,6 +104,7 @@ def smb_encrypt(password):
 	return lm_password,nt_password	
 
 def make_ldif(rows, ldif_filename):
+	ldif_file = open(ldif_filename,'w')
 	headers = rows[find_headers_row(rows)]
 	uidNumbers = [1000,2000,3000,4000]
 	for row in rows[find_headers_row(rows) + 1:]:
@@ -134,11 +135,10 @@ def make_ldif(rows, ldif_filename):
 		entry += "sambaAcctFlags: [U         ] \n"
 		entry += "sambaNTPassword: " + nt_password + "\n"
 		entry += "sambaLMPassword: " + lm_password + "\n"
-		write_to_ldif(entry)
-
-def write_to_ldif(ldif_entry):
-	#ldif_file = open(ldif_filename,'w')
-
+		entry += "\n"
+		ldif_file.write(entry.encode('utf-8'))
+	ldif_file.close()
+	
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(
 		description="""
