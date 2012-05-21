@@ -107,6 +107,7 @@ def make_ldif(rows, ldif_filename):
 	ldif_file = open(ldif_filename,'w')
 	headers = rows[find_headers_row(rows)]
 	uidNumbers = [1000,2000,3000,4000]
+	gidNumbers = [1000,2000,3000,4000]
 	for row in rows[find_headers_row(rows) + 1:]:
 		first_name = row[headers.index("First Name")]
 		last_name = row[headers.index("Last Name")]
@@ -117,6 +118,7 @@ def make_ldif(rows, ldif_filename):
 		plain_password = row[headers.index("plainTextPassword")]
 		uidNumber = uidNumbers[int(yos) - 1]
 		uidNumbers[int(yos) - 1] += 1
+		gidNumber = gidNumbers[int(yos) - 1] 
 		smbRid = uidNumber*4
 		entry = "" 
 		entry += "dn: uid=" + username + ",ou=ug,dc=eie,dc=wits,dc=ac,dc=za \n"
@@ -127,7 +129,7 @@ def make_ldif(rows, ldif_filename):
 		entry += "uid: " + username + "\n"
 		entry += "displayName: " + first_name + " " + last_name + "\n"
 		entry += "uidNumber: " + str(uidNumber) + "\n"
-		entry += "gidNumber: "# + gidNumber + "\n"
+		entry += "gidNumber: " + str(gidNumber) + "\n"
 		entry += "homeDirectory: /home/ug/" + username + "\n"
 		entry += "loginShell: /bin/bash \n"
 		entry += "# 4*uid to get RID (the last number)\n"
@@ -136,7 +138,8 @@ def make_ldif(rows, ldif_filename):
 		entry += "sambaNTPassword: " + nt_password + "\n"
 		entry += "sambaLMPassword: " + lm_password + "\n"
 		entry += "\n"
-		ldif_file.write(entry.encode('utf-8'))
+		if int(yos) > 2:
+			ldif_file.write(entry.encode('utf-8'))
 	ldif_file.close()
 	
 if __name__ == "__main__":
